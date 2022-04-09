@@ -1,1 +1,1 @@
-web: go-api-server
+web: birthday-line-notify
