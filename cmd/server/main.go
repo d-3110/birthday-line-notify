@@ -1,15 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"net/url"
 	"strings"
 	"os"
 	"strconv"
-	// "bytes"
-	// "encoding/json"
 	"github.com/uniplaces/carbon"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/mm-saito/birthday-line-notify"
@@ -24,7 +21,6 @@ type User struct {
 
 func main() {
 	http.HandleFunc("/", Index)
-	http.HandleFunc("/now", Now)
 	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), nil))
 }
 
@@ -81,17 +77,6 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		// LINE API Request
 		LineNotifyApi(name)
 	}
-	// JSONレスポンス
-	// var buf bytes.Buffer
-	// enc := json.NewEncoder(&buf)
-	// if err := enc.Encode(&data); err != nil {
-	// 	log.Fatal(err)
-	// }
-	// fmt.Println(buf.String())
-	// _, err = fmt.Fprint(w, buf.String())
-	// if err != nil {
-	// 	return
-	// }
 }
 
 func LineNotifyApi(name string) {
@@ -127,8 +112,4 @@ func LineNotifyApi(name string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-}
-func Now(w http.ResponseWriter, r *http.Request) {
-	now := carbon.Now()
-	fmt.Fprint(w, now)
 }
