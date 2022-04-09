@@ -28,23 +28,23 @@ func main() {
 }
 
 // Basic認証
-func checkAuth(r *http.Request) bool {
-    // 認証情報取得
-    clientID, clientSecret, ok := r.BasicAuth()
-    if ok == false {
-        return false
-    }
-    return clientID == os.Getenv("BASIC_AUTH_USER") && clientSecret == os.Getenv("BASIC_AUTH_PASS")
-}
+// func checkAuth(r *http.Request) bool {
+//     // 認証情報取得
+//     clientID, clientSecret, ok := r.BasicAuth()
+//     if ok == false {
+//         return false
+//     }
+//     return clientID == os.Getenv("BASIC_AUTH_USER") && clientSecret == os.Getenv("BASIC_AUTH_PASS")
+// }
 
 func Index(w http.ResponseWriter, r *http.Request) {
 	// 認証
-	if checkAuth(r) == false {
-		w.Header().Add("WWW-Authenticate", `Basic realm="SECRET AREA"`)
-		w.WriteHeader(http.StatusUnauthorized) // 401
-		http.Error(w, "Unauthorized", 401)
-		return
-	}
+	// if checkAuth(r) == false {
+	// 	w.Header().Add("WWW-Authenticate", `Basic realm="SECRET AREA"`)
+	// 	w.WriteHeader(http.StatusUnauthorized) // 401
+	// 	http.Error(w, "Unauthorized", 401)
+	// 	return
+	// }
 	name := ""
 	now := carbon.Now()
 	nowMonth, _ := strconv.Atoi(now.Format("01"))
