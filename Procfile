@@ -1,1 +1,1 @@
-web: birthday-line-notify
+web: server
