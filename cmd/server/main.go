@@ -26,15 +26,41 @@ func main() {
 
 // Basic認証
 func checkAuth(r *http.Request) bool {
-    // 認証情報取得
-    clientID, clientSecret, ok := r.BasicAuth()
-    if ok == false {
-        return false
-    }
-    return clientID == os.Getenv("BASIC_AUTH_USER") && clientSecret == os.Getenv("BASIC_AUTH_PASS")
+	// 認証情報取得
+	clientID, clientSecret, ok := r.BasicAuth()
+	if ok == false {
+		return false
+	}
+	return clientID == os.Getenv("BASIC_AUTH_USER") && clientSecret == os.Getenv("BASIC_AUTH_PASS")
+}
+
+// IP制限
+func checkIp(r *http.Request) bool {
+	ip := r.Header.Get("X-Forwarded-For")
+	if ip == "" {
+		return false
+	}
+	allowIps := strings.Split(os.Getenv("ALLOW_IPS"), ",")
+	for _, allowIp := range allowIps {
+		if ip == allowIp {
+			return true
+		}
+	}
+	return false
 }
 
 func Index(w http.ResponseWriter, r *http.Request) {
+	// 404
+	if r.URL.Path != "/" {
+		http.NotFound(w, r)
+		return
+	}
+	// herokuの外部接続用固定IP以外はアクセスさせない
+	if checkIp(r) == false {
+		w.WriteHeader(http.StatusForbidden) // 403
+		http.Error(w, "Forbidden", 403)
+		return
+	}
 	// 認証
 	if checkAuth(r) == false {
 		w.Header().Add("WWW-Authenticate", `Basic realm="SECRET AREA"`)
@@ -42,6 +68,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unauthorized", 401)
 		return
 	}
+
 	name := ""
 	now := carbon.Now()
 	nowMonth, _ := strconv.Atoi(now.Format("01"))

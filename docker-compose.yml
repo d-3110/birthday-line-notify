@@ -19,6 +19,7 @@ services:
       - LINE_TOKEN
       - BASIC_AUTH_USER
       - BASIC_AUTH_PASS
+      - ALLOW_IPS
   db:
     image: mysql:8.0.21
     ports:
