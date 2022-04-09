@@ -1,0 +1,36 @@
+version: '3'
+services:
+  go:
+    build: 
+      context: ./
+      dockerfile: ./docker/go/Dockerfile
+    tty: true
+    volumes:
+      - .:/go/src/app
+    ports:
+      - 20080:${PORT}
+    depends_on:
+      - db
+    environment:
+      - TZ
+      - PORT
+      - DRIVER
+      - DSN
+      - LINE_TOKEN
+      - BASIC_AUTH_USER
+      - BASIC_AUTH_PASS
+  db:
+    image: mysql:8.0.21
+    ports:
+      - '23306:3306'
+    volumes:
+      - go_mysql_data:/var/lib/mysql
+      - ./docker/mysql/initdb.d:/docker-entrypoint-initdb.d
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      - MYSQL_ROOT_PASSWORD
+      - MYSQL_DATABASE
+      - MYSQL_USER
+      - MYSQL_PASSWORD
+volumes:
+  go_mysql_data:
