@@ -1,7 +1,7 @@
 package main
 
 import (
-	// "fmt"
+	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -24,6 +24,7 @@ type User struct {
 
 func main() {
 	http.HandleFunc("/", Index)
+	http.HandleFunc("/now", Now)
 	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), nil))
 }
 
@@ -126,4 +127,8 @@ func LineNotifyApi(name string) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+func Now(w http.ResponseWriter, r *http.Request) {
+	now := carbon.Now()
+	fmt.Fprint(w, now)
 }
