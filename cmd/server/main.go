@@ -77,7 +77,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	if err := db.Ping(); err != nil {
 		log.Fatal("db.Ping failed:", err)
 	}
-	selected, err := db.Query("SELECT * FROM users")
+	selected, err := db.Query("SELECT * FROM users WHERE month = ? AND day = ?", nowMonth, nowDay)
 	if err != nil {
 		log.Fatal("select failed:", err)
 	}
@@ -90,12 +90,10 @@ func Index(w http.ResponseWriter, r *http.Request) {
 			log.Fatal("loop failed:", err)
 		}
 		// 対象者名設定
-		if nowMonth == user.Month && nowDay == user.Day {
-			if name == "" {
-				name = user.Name
-			} else {
-				name = name + "、" + user.Name
-			}
+		if name == "" {
+			name = user.Name
+		} else {
+			name = name + "、" + user.Name
 		}
 		data = append(data, user)
 	}
